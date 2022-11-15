@@ -50,3 +50,6 @@ app.use("/api/categories", catRouter);
 app.listen("5000", (req, res) => {
   console.log("back end is running on port 5000");
 });
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
