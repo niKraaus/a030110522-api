@@ -43,7 +43,7 @@ mongoose
 
 app.use("/auth/", authRouter);
 app.use("/user/", userRouter);
-app.use("/posts/", postRouter);
+app.use("posts/", postRouter);
 app.use("/categories/", catRouter);
 
 const PORT = process.env.PORT || 5000;
