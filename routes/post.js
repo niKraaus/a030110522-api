@@ -70,8 +70,8 @@ router.get("/:id", async (req, res) => {
 //GET ALL POSTS
 router.get("/", async (req, res) => {
   // const username = req.query.user;
-  const userName = req.rawHeaders[15].split("=")[1];
-  const catName = req.rawHeaders[15].split("=")[1];
+  const userName = req.rawHeaders && req.rawHeaders[15].split("=")[1];
+  const catName = req.rawHeaders && req.rawHeaders[15].split("=")[1];
   try {
     let posts;
     if (userName) {
