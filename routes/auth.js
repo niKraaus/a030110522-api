@@ -8,14 +8,7 @@ const router = Express.Router();
 router.post("/register", async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   const hashPassword = bcrypt.hashSync(req.body.password, salt);
-
   try {
-    const _user = await User.findOne({ username: req.body.username });
-    const email = await User.findOne({ username: req.body.email });
-    if (_user || email) {
-      res.status(400);
-      throw new Error("email or user name already in use");
-    }
     const newUser = User({
       username: req.body.username,
       email: req.body.email,
@@ -23,7 +16,9 @@ router.post("/register", async (req, res) => {
     });
     const user = await newUser.save();
     res.status(200).json(user);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json(`server error: ${error}`);
+  }
 });
 //handle login
 router.post("/login", async (req, res) => {
@@ -31,20 +26,20 @@ router.post("/login", async (req, res) => {
     //user name
     const user = await User.findOne({ username: req.body.username });
     if (!user) {
-      req.status(401);
-      throw new Error("no user with found");
+      // throw new error("no user with found");
     }
 
     //password
     const validated = await bcrypt.compare(req.body.password, user.password);
 
     if (!validated) {
-      res.status(401);
-      throw new Error("the password is wrong");
+      // throw new error("the password is wrong");
     }
 
     const { password, ...others } = user._doc;
     res.status(200).json(others); //remove the password from data
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 export default router;
