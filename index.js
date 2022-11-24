@@ -8,6 +8,7 @@ import catRouter from "./routes/category.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
+import { errorHandler } from "./middleWare.js";
 
 //middleware
 const app = Express();
@@ -48,6 +49,7 @@ app.use("/categories/", catRouter);
 
 const PORT = process.env.PORT || 5000;
 
+app.use(errorHandler);
 app.listen(PORT, (req, res) => {
   console.log(`back end is running on port ${PORT}`);
 });
