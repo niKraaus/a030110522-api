@@ -12,7 +12,7 @@ import cors from "cors";
 //middleware
 const app = Express();
 app.use(Express.json());
-app.use(cors());
+// app.use(cors());
 
 //initialise
 dotenv.config();
