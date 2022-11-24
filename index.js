@@ -7,7 +7,7 @@ import postRouter from "./routes/post.js";
 import catRouter from "./routes/category.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import cors from "cors";
+// import cors from "cors";
 
 //middleware
 const app = Express();
