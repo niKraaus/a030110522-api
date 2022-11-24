@@ -59,3 +59,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 export default router;
+//GET ALL USERS
+router.get("/users", async (req, res) => {
+  try {
+    const user = await User.find();
+    if (!user) {
+      throw new error("no user registered at the moment");
+    } else {
+      res.status(200).json(user);
+    }
+  } catch (error) {}
+});

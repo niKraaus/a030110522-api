@@ -8,6 +8,11 @@ const router = Express.Router();
 router.post("/register", async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   const hashPassword = bcrypt.hashSync(req.body.password, salt);
+  const user = await User.findOne({ username: req.body.username });
+  if (user) {
+    res.status(400);
+    throw new Error("The user name is already taken");
+  }
   try {
     const newUser = User({
       username: req.body.username,
@@ -25,12 +30,17 @@ router.post("/login", async (req, res) => {
   try {
     //user name
     const user = await User.findOne({ username: req.body.username });
+    if (!user) {
+      res.status(401);
+      throw new Error("no user with found");
+    }
 
     //password
     const validated = await bcrypt.compare(req.body.password, user.password);
 
-    if (!user && !validated) {
-      !validated && res.status(400).json("wrong credentials");
+    if (!validated) {
+      res.status(401);
+      throw new Error("the password is wrong");
     }
 
     const { password, ...others } = user._doc;

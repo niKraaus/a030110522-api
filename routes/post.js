@@ -68,7 +68,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 //GET ALL POSTS
-router.get("/", async (req, res) => {
+router.get("/allposts", async (req, res) => {
   // const username = req.query.user;
   const userName = req.rawHeaders && req.rawHeaders[15].split("=")[1];
   const catName = req.rawHeaders && req.rawHeaders[15].split("=")[1];

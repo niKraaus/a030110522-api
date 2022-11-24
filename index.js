@@ -46,7 +46,7 @@ app.use("/user/", userRouter);
 app.use("/posts", postRouter);
 app.use("/categories/", catRouter);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || "5000";
 
 app.listen(PORT, (req, res) => {
   console.log(`back end is running on port ${PORT}`);
