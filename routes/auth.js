@@ -8,13 +8,14 @@ const router = Express.Router();
 router.post("/register", async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   const hashPassword = bcrypt.hashSync(req.body.password, salt);
-  const user = await User.findOne({ username: req.body.username });
-  const email = await User.findOne({ username: req.body.email });
-  if (user || email) {
-    res.status(400);
-    throw new Error("email or user name already in use");
-  }
+
   try {
+    const _user = await User.findOne({ username: req.body.username });
+    const email = await User.findOne({ username: req.body.email });
+    if (_user || email) {
+      res.status(400);
+      throw new Error("email or user name already in use");
+    }
     const newUser = User({
       username: req.body.username,
       email: req.body.email,
