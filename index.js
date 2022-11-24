@@ -7,12 +7,12 @@ import postRouter from "./routes/post.js";
 import catRouter from "./routes/category.js";
 import path from "path";
 import { fileURLToPath } from "url";
-// import cors from "cors";
+import cors from "cors";
 
 //middleware
 const app = Express();
 app.use(Express.json());
-// app.use(cors());
+app.use(cors());
 
 //initialise
 dotenv.config();
@@ -46,7 +46,7 @@ app.use("/user/", userRouter);
 app.use("/posts", postRouter);
 app.use("/categories/", catRouter);
 
-const PORT = process.env.PORT || "5000";
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, (req, res) => {
   console.log(`back end is running on port ${PORT}`);
