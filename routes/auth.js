@@ -1,45 +1,111 @@
-import mongoose from "mongoose";
-import Express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import asyncHandler from "express-async-handler";
 
-const router = Express.Router();
-//handling user register
-router.post("/register", async (req, res) => {
+// @desc
+// handling user registering
+const registerUser = asyncHandler(async (req, res) => {
+  const { userName, phoneNumber, password } = req.body;
+  const user = await User.findOne({ phoneNumber });
+  const _user = await User.findOne({ userName });
+  if (user) {
+    res.status(400);
+    throw new Error(`the user with ${phoneNumber} already exists`);
+  }
+  if (_user) {
+    res.status(400);
+    throw new Error(`the user with name : ${userName} already exists`);
+  }
+  //@desc
+  //hashing the password
   const salt = bcrypt.genSaltSync(10);
-  const hashPassword = bcrypt.hashSync(req.body.password, salt);
-  try {
-    const newUser = User({
-      username: req.body.username,
-      email: req.body.email,
-      password: hashPassword,
+  const hashPassword = bcrypt.hashSync(password, salt);
+  //@desc
+  //creating the user in the database
+  const newUser = await User.create({
+    userName,
+    phoneNumber,
+    password: hashPassword,
+  });
+  //@desc
+  //checking the user in the data base and returning the appropriate data
+  if (newUser) {
+    res.status(201).json({
+      id: newUser._id,
+      userName: newUser.userName,
+      isAdmin: newUser.isAdmin,
     });
-    const user = await newUser.save();
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json(`server error: ${error}`);
+  } else {
+    res.status(400);
+    throw new Error("wrong user data, try again");
   }
 });
-//handle login
-router.post("/login", async (req, res) => {
-  try {
-    //user name
-    const user = await User.findOne({ username: req.body.username });
-    if (!user) {
-      // throw new error("no user with found");
-    }
 
-    //password
-    const validated = await bcrypt.compare(req.body.password, user.password);
+//@desc
+//Handling user login
+//we get the user input and compare it with the data in the database
+//then we handle the errors
+const loginUser = asyncHandler(async (req, res, next) => {
+  const { phoneNumber, password } = req.body;
+  const user_phone = await User.findOne({ phoneNumber });
+  try {
+    if (!user_phone) {
+      res.status(400);
+      throw new Error(`user with ${phoneNumber} not found`);
+    }
+    const validated = await bcrypt.compare(password, user_phone.password);
 
     if (!validated) {
-      // throw new error("the password is wrong");
+      res.status(401);
+      throw new Error("the password you entered is incorrect");
     }
-
-    const { password, ...others } = user._doc;
-    res.status(200).json(others); //remove the password from data
-  } catch (error) {
-    res.status(500).json(error);
+    res.status(200).json({
+      id: user_phone._id,
+      userName: user_phone.userName,
+      phoneNumber: user_phone.phoneNumber,
+      isAdmin: user_phone.isAdmin,
+    });
+  } catch (err) {
+    next(err);
   }
 });
-export default router;
+//@des
+//get single user
+const getOneUser = asyncHandler(async (req, res) => {
+  const user = req.body.id;
+  await User.findById(user);
+  if (user) {
+    res.status(200).json({
+      id: user._id,
+      userName: user.userName,
+      phoneNumber: user.phoneNumber,
+    });
+  } else {
+    res.status(401);
+    throw new Error("no such user is found");
+  }
+});
+//@desc
+//get all users (this will be showing in admin panel)
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find();
+  if (users.length > 0) {
+    res.status(200).json(users);
+  } else {
+    res.status(401);
+    throw new Error("no users yet");
+  }
+});
+//@desc
+//delete a user
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = req.params.id;
+  if (req.body.user.isAdmin) {
+    await User.findByIdAndDelete(user);
+    res.status(200).json("The user has been deleted");
+  } else {
+    res.status(401);
+    throw new Error("not authorized");
+  }
+});
+export { registerUser, loginUser, getAllUsers, deleteUser, getOneUser };

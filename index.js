@@ -1,17 +1,16 @@
 import Express from "express";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import authRouter from "./routes/auth.js";
-import userRouter from "./routes/user.js";
-import postRouter from "./routes/post.js";
-import catRouter from "./routes/category.js";
+import userRoutes from "./routes/userRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { errorHandler } from "./middleware/errorHandling.js";
 import cors from "cors";
-import { errorHandler } from "./middleWare.js";
+
+const app = Express();
 
 //middleware
-const app = Express();
 app.use(Express.json());
 app.use(cors());
 
@@ -28,31 +27,22 @@ mongoose
   .catch((error) => {
     console.log(`error is ${error}`);
   });
+//for deployment remove the / api
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "images");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, req.body.name);
-//   }, //image name will have to change
-// });
-// const upload = multer({ storage: storage });
-// app.post("/api/upload", upload.single("file"), (req, res) => {
-//   res.status(200).json("file has been uploaded");
+app.use("/api/user", userRoutes);
+app.use("/api/posts", postRoutes);
+
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send("Something broke!");
+//   err.message = "hey man stop";
 // });
 
-app.use("/auth/", authRouter);
-app.use("/user/", userRouter);
-app.use("/posts", postRouter);
-app.use("/categories/", catRouter);
-
-const PORT = process.env.PORT || 5000;
-
+app.get("/", (req, res) => {
+  res.send({ name: "Nicholas" });
+});
 app.use(errorHandler);
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, (req, res) => {
   console.log(`back end is running on port ${PORT}`);
-});
-app.get("/", (req, res) => {
-  res.send("Hello");
 });

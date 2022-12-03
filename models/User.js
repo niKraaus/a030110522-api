@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 const UserSchema = new Schema(
   {
-    username: {
+    userName: {
       type: String,
       required: true,
       unique: true,
     },
-    email: {
+    phoneNumber: {
       type: String,
       required: true,
       unique: true,
@@ -17,10 +17,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    profiepic: {
-      type: String,
-      default: "",
-    },
+    // profiepic: {
+    //   type: String,
+    //   default: "",
+    // },
     isAdmin: {
       type: Boolean,
       default: false,
