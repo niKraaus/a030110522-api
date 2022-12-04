@@ -89,7 +89,9 @@ const getOnePost = AsyncHandler(async (req, res) => {
 //get all posts
 
 export const getAllPosts = AsyncHandler(async (req, res) => {
-  const userName = req.query.user || req.params.user;
+  const userName = req.query.user || req.params.user; //this works in post man but not in react app
+  //to make it actually work , We have to set the params in the react app and send them to the back end
+  // console.log(userName);
 
   let posts = [];
 

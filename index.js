@@ -12,6 +12,7 @@ const app = Express();
 
 //middleware
 app.use(Express.json());
+app.use(Express.urlencoded({ extended: true }));
 app.use(cors());
 
 //initialise
