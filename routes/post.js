@@ -89,14 +89,12 @@ const getOnePost = AsyncHandler(async (req, res) => {
 //get all posts
 
 export const getAllPosts = AsyncHandler(async (req, res) => {
-  const userName = req.query.user;
+  const userName = req.query.user || req.params.user;
 
   let posts = [];
 
   if (userName) {
     posts = await Post.find({ userName: userName });
-    // } else if (catName) {
-    //   posts = await Post.find({ category: { $in: [catName] } });
   } else {
     posts = await Post.find();
   }
